@@ -11,7 +11,10 @@ app = Flask(__name__)
 
 app.secret_key = "password"
 
-db = SQLAlchemy()
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////tmp/pakt_tube.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+db = SQLAlchemy(app)
 
 blueprint = make_discord_blueprint(
     client_id=environ.get("CLIENT_ID"),
@@ -22,8 +25,10 @@ blueprint = make_discord_blueprint(
     ]
 )
 
-from pakt_tube.models import OAuth, User, db
+from pakt_tube.models import OAuth, db
 
-blueprint.storage = SQLAlchemyStorage(OAuth, db.session, user=User)
+blueprint.storage = SQLAlchemyStorage(model=OAuth, session=db.session)
 
 app.register_blueprint(blueprint, url_prefix="/login")
+
+import pakt_tube.routes
