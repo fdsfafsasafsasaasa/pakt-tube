@@ -1,0 +1,6 @@
+wheel
+flask
+flask_dance
+flask_login
+flask_caching
+flask_sqlalchemy
